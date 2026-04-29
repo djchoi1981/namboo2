@@ -441,7 +441,16 @@ const defaultOrganization = [
             locationInput.style.display = 'none';
             locationInput.removeAttribute('required');
         }
+        checkForConflicts(editEventIdInput.value !== '' ? editEventIdInput.value : null);
     });
+    
+    // Conflict detection listeners
+    const triggerConflictCheck = () => checkForConflicts(editEventIdInput.value !== '' ? editEventIdInput.value : null);
+    dateInput.addEventListener('change', triggerConflictCheck);
+    startTimeInput.addEventListener('change', triggerConflictCheck);
+    endTimeInput.addEventListener('change', triggerConflictCheck);
+    locationInput.addEventListener('blur', triggerConflictCheck);
+    document.getElementById('vehicle').addEventListener('change', triggerConflictCheck);
     committeeSelect.addEventListener('change', () => {
         const commId = committeeSelect.value;
         const org = organization.find(o => o.id === commId);
@@ -476,13 +485,18 @@ const defaultOrganization = [
         e.preventDefault();
         
         const isEditMode = editEventIdInput.value !== '';
+        const selectedType = currentEventTypeInput.value;
         
         if (checkForConflicts(isEditMode ? editEventIdInput.value : null)) {
-            const proceed = confirm("일정이 겹칩니다! 그래도 등록/수정하시겠습니까?");
-            if (!proceed) return;
+            if (selectedType === 'cell' || selectedType === 'vehicle') {
+                alert("해당 시간에 이미 예약된 일정이 있습니다. 겹치는 일정은 예약할 수 없습니다.");
+                return;
+            } else {
+                const proceed = confirm("장소가 겹치는 다른 일정이 있습니다! 그래도 등록/수정하시겠습니까?");
+                if (!proceed) return;
+            }
         }
-
-        const selectedType = currentEventTypeInput.value;
+        
         
         let finalLocation = locationInput.value;
         if (selectedType !== 'vehicle') {
