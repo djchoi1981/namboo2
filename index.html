@@ -246,6 +246,17 @@
                             <div id="conflict-message">해당 시간/장소에 이미 겹치는 일정이 있습니다!</div>
                         </div>
 
+
+                        
+                        <div class="form-group" id="location-container">
+                            <label for="location" id="location-label">장소 <span class="required" id="location-required" style="color: var(--danger);">*</span></label>
+                            <select id="location-select" required>
+                                <option value="" disabled selected>장소를 선택하세요</option>
+                                <!-- options populated by JS -->
+                            </select>
+                            <input type="text" id="location-input" placeholder="직접 입력 (예: 본당, 소예배실)" style="display: none; margin-top: 0.5rem;" required>
+                        </div>
+
                         <!-- Type A: Committee -->
                         <div id="fields-committee" class="type-fields" style="display: none;">
                             <div class="form-row">
@@ -328,15 +339,6 @@
                                 <label for="end-time">종료 시간 <span class="required" style="color: var(--danger);">*</span></label>
                                 <input type="time" id="end-time" required>
                             </div>
-                        </div>
-                        
-                        <div class="form-group" id="location-container">
-                            <label for="location" id="location-label">장소 <span class="required" id="location-required" style="color: var(--danger);">*</span></label>
-                            <select id="location-select" required>
-                                <option value="" disabled selected>장소를 선택하세요</option>
-                                <!-- options populated by JS -->
-                            </select>
-                            <input type="text" id="location-input" placeholder="직접 입력 (예: 본당, 소예배실)" style="display: none; margin-top: 0.5rem;" required>
                         </div>
                         
                         <div class="form-group">

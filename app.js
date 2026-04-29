@@ -316,8 +316,13 @@ const defaultOrganization = [
             locationLabel.innerHTML = '예약 장소 <span class="required" style="color: var(--danger);">*</span>';
             locationSelect.style.display = 'block';
             locationSelect.setAttribute('required', 'true');
-            if (locationSelect.value !== 'custom') locationInput.style.display = 'none';
-            locationInput.setAttribute('required', 'true');
+            if (locationSelect.value !== 'custom') {
+                locationInput.style.display = 'none';
+                locationInput.removeAttribute('required');
+            } else {
+                locationInput.style.display = 'block';
+                locationInput.setAttribute('required', 'true');
+            }
             locationInput.placeholder = "직접 입력 (예: 본당, 소예배실)";
             formTitle.innerHTML = `<i class="ph ph-calendar-plus"></i> ${menuNames.cell} 등록`;
         } else {
