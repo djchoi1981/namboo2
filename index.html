@@ -245,11 +245,11 @@
                         <h3 id="form-title"><i class="ph ph-calendar-plus"></i> 예약 등록</h3>
                         <p>일정 정보를 입력해 주세요.</p>
                     </div>
-                    <form id="event-form">
+                    <form id="event-form" style="display: flex; flex-direction: column;">
                         
                         <input type="hidden" id="current-event-type" value="committee">
 
-                        <div id="conflict-alert" class="conflict-alert" style="display: none;">
+                        <div id="conflict-alert" class="conflict-alert" style="display: none; order: 1;">
                             <i class="ph-fill ph-warning"></i>
                             <div id="conflict-message">해당 시간/장소에 이미 겹치는 일정이 있습니다!</div>
                         </div>
@@ -257,7 +257,7 @@
 
 
                         <!-- Type A: Committee -->
-                        <div id="fields-committee" class="type-fields" style="display: none;">
+                        <div id="fields-committee" class="type-fields" style="display: none; order: 2;">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="committee">위원회 <span class="required" style="color: var(--danger);">*</span></label>
@@ -279,7 +279,7 @@
                         </div>
 
                         <!-- Type B: Cell / Group -->
-                        <div id="fields-cell" class="type-fields" style="display: none;">
+                        <div id="fields-cell" class="type-fields" style="display: none; order: 2;">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="cellName">셀/모임명 <span class="required" style="color: var(--danger);">*</span></label>
@@ -297,7 +297,7 @@
                         </div>
 
                         <!-- Type C: Vehicle -->
-                        <div id="fields-vehicle" class="type-fields" style="display: none;">
+                        <div id="fields-vehicle" class="type-fields" style="display: none; order: 2;">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="vehicle">차량 선택 <span class="required" style="color: var(--danger);">*</span></label>
@@ -323,24 +323,30 @@
                         </div>
 
                         <!-- Common Fields -->
-                        <div class="form-row">
+                        <div class="form-row" style="order: 3;">
                             <div class="form-group" style="width: 100%;">
                                 <label for="date">날짜 <span class="required" style="color: var(--danger);">*</span></label>
                                 <input type="date" id="date" required>
                             </div>
                         </div>
-                        <div class="form-row">
+                        <div class="form-row" id="time-container" style="order: 4;">
                             <div class="form-group">
                                 <label for="start-time">시작 시간 <span class="required" style="color: var(--danger);">*</span></label>
-                                <input type="time" id="start-time" step="600" required>
+                                <select id="start-time" class="time-select" required>
+                                    <option value="" disabled selected>선택하세요</option>
+                                    <!-- options populated by JS -->
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="end-time">종료 시간 <span class="required" style="color: var(--danger);">*</span></label>
-                                <input type="time" id="end-time" step="600" required>
+                                <select id="end-time" class="time-select" required>
+                                    <option value="" disabled selected>선택하세요</option>
+                                    <!-- options populated by JS -->
+                                </select>
                             </div>
                         </div>
 
-                        <div class="form-group" id="location-container">
+                        <div class="form-group" id="location-container" style="order: 5;">
                             <label for="location" id="location-label">장소 <span class="required" id="location-required" style="color: var(--danger);">*</span></label>
                             <select id="location-select" required>
                                 <option value="" disabled selected>장소를 선택하세요</option>
@@ -349,13 +355,13 @@
                             <input type="text" id="location-input" placeholder="직접 입력 (예: 본당, 소예배실)" style="display: none; margin-top: 0.5rem;" required>
                         </div>
                         
-                        <div class="form-group">
+                        <div class="form-group" style="order: 6;">
                             <label for="description">상세 내용 (선택)</label>
                             <textarea id="description" rows="3" placeholder="기타 필요한 내용을 입력하세요"></textarea>
                         </div>
 
                         <!-- Password for Edit/Delete -->
-                        <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem;">
+                        <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; order: 7;">
                             <label for="event-password">비밀번호 (수정/삭제용) <span class="required" style="color: var(--danger);">*</span></label>
                             <input type="password" id="event-password" placeholder="4자리 이상 숫자/문자" required>
                             <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">이 비밀번호는 나중에 일정을 수정하거나 삭제할 때 필요합니다.</p>

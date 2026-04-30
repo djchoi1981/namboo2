@@ -468,6 +468,11 @@ input:focus, select:focus, textarea:focus {
     box-shadow: 0 0 0 3px var(--primary-light);
 }
 
+.time-select option:disabled {
+    color: var(--danger);
+    background-color: var(--background);
+}
+
 /* Buttons */
 .btn {
     padding: 0.625rem 1rem;
