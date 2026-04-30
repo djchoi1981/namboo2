@@ -153,6 +153,12 @@ const defaultOrganization = [
     const btnDeleteEvent = document.getElementById('btn-delete-event');
     const eventActionError = document.getElementById('event-action-error');
 
+    // Day Events Modal
+    const dayEventsModal = document.getElementById('day-events-modal');
+    const closeDayEventsBtn = document.getElementById('close-day-events-btn');
+    const dayEventsTitle = document.getElementById('day-events-title');
+    const dayEventsList = document.getElementById('day-events-list');
+
     // Auth & Admin DOM
     
     
@@ -581,6 +587,10 @@ const defaultOrganization = [
         dateInput.value = todayStr;
         conflictAlert.style.display = 'none';
         switchFormType(selectedType); // restore the form type
+        
+        // 자동 전환
+        navCalendar.click();
+        window.scrollTo(0, 0);
     });
     
     cancelEditBtn.addEventListener('click', exitEditMode);
@@ -696,6 +706,12 @@ const defaultOrganization = [
             showToast("삭제되었습니다.");
         });
     });
+
+    if (closeDayEventsBtn) {
+        closeDayEventsBtn.addEventListener('click', () => {
+            dayEventsModal.style.display = 'none';
+        });
+    }
 
     btnEditEvent.addEventListener('click', () => {
         const ev = events.find(e => e.id === currentEventIdForAction);
@@ -865,23 +881,33 @@ const defaultOrganization = [
         eventsContainer.style.gap = '3px';
         eventsContainer.style.marginTop = '4px';
 
+        const dotsContainer = document.createElement('div');
+        dotsContainer.className = 'event-dot-container';
+
         dayEvents.forEach(e => {
             const tag = document.createElement('div');
             tag.className = `event-tag`;
+            
+            const dot = document.createElement('div');
+            dot.className = `event-dot`;
             
             let icon = '';
             let label = '';
             
             if(e.eventType === 'committee') {
-                tag.style.backgroundColor = getCommitteeColor(e.committee);
+                const color = getCommitteeColor(e.committee);
+                tag.style.backgroundColor = color;
+                dot.style.backgroundColor = color;
                 icon = '<i class="ph ph-users-three"></i>';
                 label = `${e.department}`;
             } else if(e.eventType === 'cell') {
                 tag.style.backgroundColor = '#10b981';
+                dot.style.backgroundColor = '#10b981';
                 icon = '<i class="ph ph-users"></i>';
                 label = `${e.cellName}`;
             } else if(e.eventType === 'vehicle') {
                 tag.style.backgroundColor = '#f59e0b';
+                dot.style.backgroundColor = '#f59e0b';
                 icon = '<i class="ph ph-car"></i>';
                 label = `${e.vehicle}`;
             }
@@ -891,12 +917,24 @@ const defaultOrganization = [
             tag.innerHTML = `<span>${e.startTime}</span> ${icon} ${label}`;
             
             tag.style.cursor = 'pointer';
-            tag.addEventListener('click', () => showEventDetails(e));
+            tag.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                showEventDetails(e);
+            });
             
             eventsContainer.appendChild(tag);
+            dotsContainer.appendChild(dot);
         });
 
         cell.appendChild(eventsContainer);
+        cell.appendChild(dotsContainer);
+        
+        cell.addEventListener('click', () => {
+            if (window.innerWidth <= 768 && dayEvents.length > 0) {
+                showDayEventsModal(dateString, dayEvents);
+            }
+        });
+        
         calendarGrid.appendChild(cell);
     }
 
@@ -905,6 +943,39 @@ const defaultOrganization = [
         const m = String(date.getMonth() + 1).padStart(2, '0');
         const d = String(date.getDate()).padStart(2, '0');
         return `${y}-${m}-${d}`;
+    }
+
+    function showDayEventsModal(dateStr, dayEvents) {
+        dayEventsTitle.textContent = `${dateStr} 일정`;
+        dayEventsList.innerHTML = '';
+        
+        dayEvents.forEach(e => {
+            const item = document.createElement('div');
+            item.className = 'mini-event';
+            item.style.cursor = 'pointer';
+            
+            let typeColor = '';
+            let typeName = '';
+            if (e.eventType === 'committee') { typeColor = getCommitteeColor(e.committee); typeName = menuNames.committee; }
+            else if (e.eventType === 'cell') { typeColor = '#10b981'; typeName = menuNames.cell; }
+            else if (e.eventType === 'vehicle') { typeColor = '#f59e0b'; typeName = menuNames.vehicle; }
+            
+            item.style.borderLeftColor = typeColor;
+            
+            item.innerHTML = `
+                <h4 style="margin-bottom: 0.2rem;">${e.title || '제목 없음'}</h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted);"><span style="color:${typeColor};font-weight:600;">${typeName}</span> | ${e.startTime} ~ ${e.endTime}</p>
+            `;
+            
+            item.addEventListener('click', () => {
+                dayEventsModal.style.display = 'none';
+                showEventDetails(e);
+            });
+            
+            dayEventsList.appendChild(item);
+        });
+        
+        dayEventsModal.style.display = 'flex';
     }
 
     function renderUpcomingEvents() {
