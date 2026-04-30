@@ -872,3 +872,22 @@ input:focus, select:focus, textarea:focus {
         margin-top: 0.5rem;
     }
 }
+
+/* Calendar Swipe Animations */
+@keyframes slide-left-anim {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-right-anim {
+    from { transform: translateX(-30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.slide-left {
+    animation: slide-left-anim 0.3s ease-out;
+}
+
+.slide-right {
+    animation: slide-right-anim 0.3s ease-out;
+}

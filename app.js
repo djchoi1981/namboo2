@@ -446,6 +446,37 @@ const defaultOrganization = [
         }
         showToast("로그아웃 되었습니다.");
     });
+    // Swipe logic for Calendar
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    calendarGrid.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+
+    calendarGrid.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleCalendarSwipe();
+    }, {passive: true});
+
+    function handleCalendarSwipe() {
+        const threshold = 50;
+        if (touchEndX < touchStartX - threshold) {
+            // Swiped left -> Next Month
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            calendarGrid.classList.remove('slide-right', 'slide-left');
+            void calendarGrid.offsetWidth;
+            calendarGrid.classList.add('slide-left');
+            renderCurrentView();
+        } else if (touchEndX > touchStartX + threshold) {
+            // Swiped right -> Prev Month
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            calendarGrid.classList.remove('slide-right', 'slide-left');
+            void calendarGrid.offsetWidth;
+            calendarGrid.classList.add('slide-right');
+            renderCurrentView();
+        }
+    }
 
     // Calendar Navigation & Filter
     function renderCurrentView() {
@@ -466,11 +497,17 @@ const defaultOrganization = [
 
     prevMonthBtn.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
+        calendarGrid.classList.remove('slide-right', 'slide-left');
+        void calendarGrid.offsetWidth;
+        calendarGrid.classList.add('slide-right');
         renderCurrentView();
     });
 
     nextMonthBtn.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() + 1);
+        calendarGrid.classList.remove('slide-right', 'slide-left');
+        void calendarGrid.offsetWidth;
+        calendarGrid.classList.add('slide-left');
         renderCurrentView();
     });
 
