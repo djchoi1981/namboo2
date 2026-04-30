@@ -921,12 +921,12 @@ const defaultOrganization = [
                 tag.style.backgroundColor = '#10b981';
                 dot.style.backgroundColor = '#10b981';
                 icon = '<i class="ph ph-users"></i>';
-                label = `${e.cellName}`;
+                label = `${e.location}(${e.cellName})`;
             } else if(e.eventType === 'vehicle') {
                 tag.style.backgroundColor = '#f59e0b';
                 dot.style.backgroundColor = '#f59e0b';
                 icon = '<i class="ph ph-car"></i>';
-                label = `${e.vehicle}`;
+                label = `${e.vehicle}(${e.title})`;
             }
             
             tag.style.color = '#fff';
