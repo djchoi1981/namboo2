@@ -86,6 +86,10 @@ const defaultOrganization = [
     const sidebarAdminBtn = document.getElementById('sidebar-admin-btn');
     const sidebarLogoutBtn = document.getElementById('sidebar-logout-btn');
     
+    // Mobile Menu
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
     
     const calendarSection = document.getElementById('calendar-view');
     const committeeSection = document.getElementById('committee-view');
@@ -286,6 +290,26 @@ const defaultOrganization = [
         navCell.classList.remove('active');
         navVehicle.classList.remove('active');
         sidebarAdminBtn.classList.remove('active');
+        
+        if (sidebar && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('show');
+        }
+    }
+    
+    // Mobile Menu Toggle
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('show');
+        });
+    }
+    
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('show');
+        });
     }
     
     function switchFormType(type) {

@@ -29,7 +29,7 @@
 <body>
     <div class="app-container">
         <!-- Sidebar / Navigation -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <a href="https://www.nambooch.or.kr/" target="_blank" title="남부전원교회 홈페이지로 이동">
                     <img src="logo.jpg" alt="남부전원교회" class="church-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMzAiPjx0ZXh0IHg9IjAiIHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiPuyCrOynhOydhCDsspjtg4A8L3RleHQ+PC9zdmc+'">
@@ -53,12 +53,16 @@
                 <a href="#" id="sidebar-logout-btn" class="nav-item" style="color: var(--danger); display: none; margin-top: 0.5rem;"><i class="ph ph-sign-out"></i> 로그아웃</a>
             </div>
         </aside>
+        
+        <!-- Sidebar Overlay -->
+        <div id="sidebar-overlay" class="sidebar-overlay" style="display: none;"></div>
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <header class="top-header">
+            <header class="top-header" style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); background-color: var(--surface);">
                 <div class="header-left" style="width: 100%;">
                     <div class="month-navigation" style="width: 100%; display: flex; align-items: center;">
+                        <button id="mobile-menu-btn" class="icon-btn mobile-menu-btn" style="display: none; margin-right: 0.5rem;"><i class="ph ph-list"></i></button>
                         <button id="prev-month" class="icon-btn"><i class="ph ph-caret-left"></i></button>
                         <span id="current-month-display">2026년 4월</span>
                         <button id="next-month" class="icon-btn"><i class="ph ph-caret-right"></i></button>
