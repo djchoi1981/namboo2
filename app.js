@@ -374,7 +374,6 @@ const defaultOrganization = [
         registrationSection.style.display = 'none';
         calendarFilter.style.display = 'block';
         
-        monthNavigation.style.display = 'flex';
         renderCalendar();
     });
 
@@ -385,7 +384,6 @@ const defaultOrganization = [
         committeeSection.style.display = 'block';
         registrationSection.style.display = 'block';
         
-        monthNavigation.style.display = 'none';
         switchFormType('committee');
         renderCommitteeList();
     });
@@ -397,7 +395,6 @@ const defaultOrganization = [
         cellSection.style.display = 'block';
         registrationSection.style.display = 'block';
         
-        monthNavigation.style.display = 'none';
         switchFormType('cell');
         renderCellList();
     });
@@ -409,7 +406,6 @@ const defaultOrganization = [
         vehicleSection.style.display = 'block';
         registrationSection.style.display = 'block';
         
-        monthNavigation.style.display = 'none';
         switchFormType('vehicle');
         renderVehicleList();
     });
@@ -426,7 +422,6 @@ const defaultOrganization = [
             sidebarAdminBtn.classList.add('active');
             adminSection.style.display = 'block';
             registrationSection.style.display = 'none';
-            monthNavigation.style.display = 'none';
             renderAdminOrgList();
         renderAdminRoomsList();
         renderAdminVehiclesList();
@@ -447,19 +442,31 @@ const defaultOrganization = [
     });
 
     // Calendar Navigation & Filter
+    function renderCurrentView() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        currentMonthDisplay.textContent = `${year}년 ${month + 1}월`;
+
+        if (calendarSection.style.display === 'block') renderCalendar();
+        if (committeeSection.style.display === 'block') renderCommitteeList();
+        if (cellSection.style.display === 'block') renderCellList();
+        if (vehicleSection.style.display === 'block') renderVehicleList();
+        if (adminSection.style.display === 'block' && isLoggedIn) renderAdminEventsList();
+    }
+
     prevMonthBtn.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
+        renderCurrentView();
     });
 
     nextMonthBtn.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
+        renderCurrentView();
     });
 
     todayBtn.addEventListener('click', () => {
         currentDate = new Date();
-        renderCalendar();
+        renderCurrentView();
     });
     
     calendarFilter.addEventListener('change', renderCalendar);
@@ -1086,7 +1093,9 @@ const defaultOrganization = [
         
         const filterC = filterCommittee.value;
         const filterD = filterDepartment.value;
-        let filteredEvents = events.filter(e => e.eventType === 'committee');
+        const targetMonthStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+        
+        let filteredEvents = events.filter(e => e.eventType === 'committee' && e.date.startsWith(targetMonthStr));
         
         if (filterC !== 'all') {
             filteredEvents = filteredEvents.filter(e => e.committee === filterC);
@@ -1143,7 +1152,9 @@ const defaultOrganization = [
         if (!cellListContainer) return;
         
         const filterVal = filterCellName.value.toLowerCase();
-        let filteredEvents = events.filter(e => e.eventType === 'cell');
+        const targetMonthStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+        
+        let filteredEvents = events.filter(e => e.eventType === 'cell' && e.date.startsWith(targetMonthStr));
         
         if (filterVal) {
             filteredEvents = filteredEvents.filter(e => e.cellName.toLowerCase().includes(filterVal));
@@ -1197,7 +1208,9 @@ const defaultOrganization = [
         if (!vehicleListContainer) return;
         
         const filterVal = filterVehicle.value;
-        let filteredEvents = events.filter(e => e.eventType === 'vehicle');
+        const targetMonthStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+        
+        let filteredEvents = events.filter(e => e.eventType === 'vehicle' && e.date.startsWith(targetMonthStr));
         
         if (filterVal !== 'all') {
             filteredEvents = filteredEvents.filter(e => e.vehicle === filterVal);
@@ -1262,7 +1275,9 @@ const defaultOrganization = [
         if(!adminEventsContainer) return;
         
         const filterVal = adminEventFilter.value;
-        let filteredEvents = events;
+        const targetMonthStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+        
+        let filteredEvents = events.filter(e => e.date.startsWith(targetMonthStr));
         
         if (filterVal !== 'all') {
             filteredEvents = events.filter(e => e.eventType === filterVal);

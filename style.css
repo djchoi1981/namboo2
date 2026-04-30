@@ -227,11 +227,22 @@ nav {
 
 .content-grid {
     flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 400px;
+    display: flex;
     gap: 1.5rem;
     padding: 1.5rem 2rem;
     overflow-y: auto;
+    align-items: flex-start;
+}
+
+.calendar-section, .list-section, .admin-section {
+    flex: 1;
+    min-width: 0;
+}
+
+.registration-section {
+    width: 400px;
+    flex-shrink: 0;
+    order: -1;
 }
 
 /* Cards */
@@ -785,7 +796,10 @@ input:focus, select:focus, textarea:focus {
 /* Responsive */
 @media (max-width: 1024px) {
     .content-grid {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+    }
+    .registration-section {
+        width: 100%;
     }
 }
 
