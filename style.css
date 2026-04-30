@@ -231,7 +231,6 @@ nav {
     gap: 1.5rem;
     padding: 1.5rem 2rem;
     overflow-y: auto;
-    align-items: flex-start;
 }
 
 .calendar-section, .list-section, .admin-section {

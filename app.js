@@ -99,6 +99,8 @@ const defaultOrganization = [
     const registrationSection = document.getElementById('registration-section');
     
     const monthNavigation = document.querySelector('.month-navigation');
+    const monthFilterLabel = document.getElementById('month-filter-label');
+    const monthFilterCheckbox = document.getElementById('month-filter-checkbox');
     
     // Form & Common fields
     const form = document.getElementById('event-form');
@@ -335,14 +337,12 @@ const defaultOrganization = [
         });
         
         if (type === 'vehicle') {
-            locationLabel.innerHTML = '목적지 (선택)';
-            locationSelect.style.display = 'none';
+            document.getElementById('location-container').style.display = 'none';
             locationSelect.removeAttribute('required');
-            locationInput.style.display = 'block';
             locationInput.removeAttribute('required');
-            locationInput.placeholder = "예: 양평수양관, 시청역";
             formTitle.innerHTML = `<i class="ph ph-calendar-plus"></i> ${menuNames.vehicle} 등록`;
         } else if (type === 'cell') {
+            document.getElementById('location-container').style.display = 'block';
             locationLabel.innerHTML = '예약 장소 <span class="required" style="color: var(--danger);">*</span>';
             locationSelect.style.display = 'block';
             locationSelect.setAttribute('required', 'true');
@@ -356,11 +356,12 @@ const defaultOrganization = [
             locationInput.placeholder = "직접 입력 (예: 본당, 소예배실)";
             formTitle.innerHTML = `<i class="ph ph-calendar-plus"></i> ${menuNames.cell} 등록`;
         } else {
-            locationLabel.innerHTML = '장소 <span class="required" style="color: var(--danger);">*</span>';
+            document.getElementById('location-container').style.display = 'block';
+            locationLabel.innerHTML = '장소 (선택)';
             locationSelect.style.display = 'block';
-            locationSelect.setAttribute('required', 'true');
+            locationSelect.removeAttribute('required');
             if (locationSelect.value !== 'custom') locationInput.style.display = 'none';
-            locationInput.setAttribute('required', 'true');
+            locationInput.removeAttribute('required');
             locationInput.placeholder = "직접 입력 (예: 본당, 소예배실)";
             formTitle.innerHTML = `<i class="ph ph-calendar-plus"></i> ${menuNames.committee} 등록`;
         }
@@ -373,6 +374,7 @@ const defaultOrganization = [
         calendarSection.style.display = 'block';
         registrationSection.style.display = 'none';
         calendarFilter.style.display = 'block';
+        if (monthFilterLabel) monthFilterLabel.style.display = 'none';
         
         renderCalendar();
     });
@@ -383,6 +385,7 @@ const defaultOrganization = [
         navCommittee.classList.add('active');
         committeeSection.style.display = 'block';
         registrationSection.style.display = 'block';
+        if (monthFilterLabel) monthFilterLabel.style.display = 'flex';
         
         switchFormType('committee');
         renderCommitteeList();
@@ -394,6 +397,7 @@ const defaultOrganization = [
         navCell.classList.add('active');
         cellSection.style.display = 'block';
         registrationSection.style.display = 'block';
+        if (monthFilterLabel) monthFilterLabel.style.display = 'flex';
         
         switchFormType('cell');
         renderCellList();
@@ -405,6 +409,7 @@ const defaultOrganization = [
         navVehicle.classList.add('active');
         vehicleSection.style.display = 'block';
         registrationSection.style.display = 'block';
+        if (monthFilterLabel) monthFilterLabel.style.display = 'flex';
         
         switchFormType('vehicle');
         renderVehicleList();
@@ -422,6 +427,7 @@ const defaultOrganization = [
             sidebarAdminBtn.classList.add('active');
             adminSection.style.display = 'block';
             registrationSection.style.display = 'none';
+            if (monthFilterLabel) monthFilterLabel.style.display = 'flex';
             renderAdminOrgList();
         renderAdminRoomsList();
         renderAdminVehiclesList();
@@ -452,6 +458,10 @@ const defaultOrganization = [
         if (cellSection.style.display === 'block') renderCellList();
         if (vehicleSection.style.display === 'block') renderVehicleList();
         if (adminSection.style.display === 'block' && isLoggedIn) renderAdminEventsList();
+    }
+    
+    if (monthFilterCheckbox) {
+        monthFilterCheckbox.addEventListener('change', renderCurrentView);
     }
 
     prevMonthBtn.addEventListener('click', () => {
@@ -1095,7 +1105,10 @@ const defaultOrganization = [
         const filterD = filterDepartment.value;
         const targetMonthStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
         
-        let filteredEvents = events.filter(e => e.eventType === 'committee' && e.date.startsWith(targetMonthStr));
+        let filteredEvents = events.filter(e => e.eventType === 'committee');
+        if (monthFilterCheckbox && monthFilterCheckbox.checked) {
+            filteredEvents = filteredEvents.filter(e => e.date.startsWith(targetMonthStr));
+        }
         
         if (filterC !== 'all') {
             filteredEvents = filteredEvents.filter(e => e.committee === filterC);
@@ -1154,7 +1167,10 @@ const defaultOrganization = [
         const filterVal = filterCellName.value.toLowerCase();
         const targetMonthStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
         
-        let filteredEvents = events.filter(e => e.eventType === 'cell' && e.date.startsWith(targetMonthStr));
+        let filteredEvents = events.filter(e => e.eventType === 'cell');
+        if (monthFilterCheckbox && monthFilterCheckbox.checked) {
+            filteredEvents = filteredEvents.filter(e => e.date.startsWith(targetMonthStr));
+        }
         
         if (filterVal) {
             filteredEvents = filteredEvents.filter(e => e.cellName.toLowerCase().includes(filterVal));
@@ -1210,7 +1226,10 @@ const defaultOrganization = [
         const filterVal = filterVehicle.value;
         const targetMonthStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
         
-        let filteredEvents = events.filter(e => e.eventType === 'vehicle' && e.date.startsWith(targetMonthStr));
+        let filteredEvents = events.filter(e => e.eventType === 'vehicle');
+        if (monthFilterCheckbox && monthFilterCheckbox.checked) {
+            filteredEvents = filteredEvents.filter(e => e.date.startsWith(targetMonthStr));
+        }
         
         if (filterVal !== 'all') {
             filteredEvents = filteredEvents.filter(e => e.vehicle === filterVal);
@@ -1244,7 +1263,6 @@ const defaultOrganization = [
                 <div class="dept-item-meta">
                     <span><i class="ph ph-calendar"></i> ${e.date}</span>
                     <span><i class="ph ph-clock"></i> ${e.startTime} ~ ${e.endTime}</span>
-                    <span style="color: #f59e0b; font-weight: 500;"><i class="ph ph-map-pin"></i> 목적지: ${e.location || '미지정'}</span>
                     <span style="margin-left: auto;">[${menuNames.vehicle}] ${e.vehicle} (${e.reserver})</span>
                 </div>
             `;
@@ -1277,7 +1295,10 @@ const defaultOrganization = [
         const filterVal = adminEventFilter.value;
         const targetMonthStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
         
-        let filteredEvents = events.filter(e => e.date.startsWith(targetMonthStr));
+        let filteredEvents = events;
+        if (monthFilterCheckbox && monthFilterCheckbox.checked) {
+            filteredEvents = filteredEvents.filter(e => e.date.startsWith(targetMonthStr));
+        }
         
         if (filterVal !== 'all') {
             filteredEvents = events.filter(e => e.eventType === filterVal);
