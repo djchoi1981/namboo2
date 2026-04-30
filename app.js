@@ -1704,8 +1704,6 @@ const defaultOrganization = [
         });
     }
 
-    }
-
     function updateTimeAvailability() {
         const type = currentEventTypeInput.value;
         const date = dateInput.value;
