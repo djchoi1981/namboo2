@@ -453,7 +453,7 @@ const defaultOrganization = [
         const month = currentDate.getMonth();
         currentMonthDisplay.textContent = `${year}년 ${month + 1}월`;
 
-        if (calendarSection.style.display === 'block') renderCalendar();
+        if (calendarSection.style.display === 'block' || calendarSection.style.display === '') renderCalendar();
         if (committeeSection.style.display === 'block') renderCommitteeList();
         if (cellSection.style.display === 'block') renderCellList();
         if (vehicleSection.style.display === 'block') renderVehicleList();
@@ -973,14 +973,27 @@ const defaultOrganization = [
             
             let typeColor = '';
             let typeName = '';
-            if (e.eventType === 'committee') { typeColor = getCommitteeColor(e.committee); typeName = menuNames.committee; }
-            else if (e.eventType === 'cell') { typeColor = '#10b981'; typeName = menuNames.cell; }
-            else if (e.eventType === 'vehicle') { typeColor = '#f59e0b'; typeName = menuNames.vehicle; }
+            let displayTitle = e.title || '제목 없음';
+            
+            if (e.eventType === 'committee') { 
+                typeColor = getCommitteeColor(e.committee); 
+                typeName = menuNames.committee; 
+            }
+            else if (e.eventType === 'cell') { 
+                typeColor = '#10b981'; 
+                typeName = menuNames.cell; 
+                displayTitle = `${e.location}(${e.cellName})`;
+            }
+            else if (e.eventType === 'vehicle') { 
+                typeColor = '#f59e0b'; 
+                typeName = menuNames.vehicle; 
+                displayTitle = `${e.vehicle}(${e.title})`;
+            }
             
             item.style.borderLeftColor = typeColor;
             
             item.innerHTML = `
-                <h4 style="margin-bottom: 0.2rem;">${e.title || '제목 없음'}</h4>
+                <h4 style="margin-bottom: 0.2rem;">${displayTitle}</h4>
                 <p style="font-size: 0.8rem; color: var(--text-muted);"><span style="color:${typeColor};font-weight:600;">${typeName}</span> | ${e.startTime} ~ ${e.endTime}</p>
             `;
             
