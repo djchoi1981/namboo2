@@ -112,8 +112,9 @@ const defaultOrganization = [
     const toast = document.getElementById('toast');
     
     const dateInput = document.getElementById('date');
-    const startTimeSelect = document.getElementById('start-time');
-    const endTimeSelect = document.getElementById('end-time');
+    const startTimeInput = document.getElementById('start-time');
+    const endTimeInput = document.getElementById('end-time');
+    const unavailableTimesInfo = document.getElementById('unavailable-times-info');
     const locationSelect = document.getElementById('location-select');
     const locationInput = document.getElementById('location-input');
     const newRoomName = document.getElementById('new-room-name');
@@ -539,8 +540,8 @@ const defaultOrganization = [
     // Conflict detection listeners
     const triggerConflictCheck = () => checkForConflicts(editEventIdInput.value !== '' ? editEventIdInput.value : null);
     dateInput.addEventListener('change', triggerConflictCheck);
-    startTimeSelect.addEventListener('change', triggerConflictCheck);
-    endTimeSelect.addEventListener('change', triggerConflictCheck);
+    startTimeInput.addEventListener('change', triggerConflictCheck);
+    endTimeInput.addEventListener('change', triggerConflictCheck);
     locationInput.addEventListener('blur', triggerConflictCheck);
     document.getElementById('vehicle').addEventListener('change', triggerConflictCheck);
     committeeSelect.addEventListener('change', () => {
@@ -601,8 +602,8 @@ const defaultOrganization = [
             id: isEditMode ? editEventIdInput.value : Date.now().toString(),
             eventType: selectedType,
             date: dateInput.value,
-            startTime: startTimeSelect.value,
-            endTime: endTimeSelect.value,
+            startTime: startTimeInput.value,
+            endTime: endTimeInput.value,
             location: finalLocation,
             description: descriptionInput.value,
             password: eventPasswordInput.value
@@ -787,8 +788,8 @@ const defaultOrganization = [
         
         editEventIdInput.value = ev.id;
         dateInput.value = ev.date;
-        startTimeSelect.value = ev.startTime;
-        endTimeSelect.value = ev.endTime;
+        startTimeInput.value = ev.startTime;
+        endTimeInput.value = ev.endTime;
         if (ev.eventType === 'vehicle') {
             locationInput.value = ev.location;
         } else {
@@ -1097,8 +1098,8 @@ const defaultOrganization = [
 
     function checkForConflicts(excludeId = null) {
         const date = dateInput.value;
-        const start = startTimeSelect.value;
-        const end = endTimeSelect.value;
+        const start = startTimeInput.value;
+        const end = endTimeInput.value;
         const type = currentEventTypeInput.value;
         let loc = locationInput.value;
         if (type !== 'vehicle' && locationSelect.value !== 'custom') {
@@ -1703,31 +1704,16 @@ const defaultOrganization = [
         });
     }
 
-    function populateTimeOptions() {
-        startTimeSelect.innerHTML = '<option value="" disabled selected>선택하세요</option>';
-        endTimeSelect.innerHTML = '<option value="" disabled selected>선택하세요</option>';
-        
-        for (let h = 0; h < 24; h++) {
-            for (let m = 0; m < 60; m += 10) {
-                const timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-                const opt1 = document.createElement('option');
-                opt1.value = timeStr;
-                opt1.textContent = timeStr;
-                startTimeSelect.appendChild(opt1);
-                
-                const opt2 = document.createElement('option');
-                opt2.value = timeStr;
-                opt2.textContent = timeStr;
-                endTimeSelect.appendChild(opt2);
-            }
-        }
     }
 
     function updateTimeAvailability() {
         const type = currentEventTypeInput.value;
         const date = dateInput.value;
         
-        if (!date) return;
+        if (!date) {
+            unavailableTimesInfo.style.display = 'none';
+            return;
+        }
         
         let locationOrVehicle = '';
         if (type === 'vehicle') {
@@ -1736,7 +1722,10 @@ const defaultOrganization = [
             locationOrVehicle = locationSelect.value === 'custom' ? locationInput.value : locationSelect.value;
         }
         
-        if (!locationOrVehicle) return;
+        if (!locationOrVehicle) {
+            unavailableTimesInfo.style.display = 'none';
+            return;
+        }
         
         const conflictingEvents = events.filter(e => {
             if (e.date !== date) return false;
@@ -1749,58 +1738,27 @@ const defaultOrganization = [
             }
         });
         
-        Array.from(startTimeSelect.options).forEach(opt => {
-            if (!opt.value) return; 
-            opt.disabled = false;
-            opt.style.color = '';
-            opt.textContent = opt.value;
-        });
-        Array.from(endTimeSelect.options).forEach(opt => {
-            if (!opt.value) return; 
-            opt.disabled = false;
-            opt.style.color = '';
-            opt.textContent = opt.value;
-        });
+        if (conflictingEvents.length > 0) {
+            const timeList = conflictingEvents.map(e => `${e.startTime}~${e.endTime}`).join(', ');
+            unavailableTimesInfo.innerHTML = `🚫 <b>해당 날짜 예약 불가 시간:</b><br>${timeList}`;
+            unavailableTimesInfo.style.display = 'block';
+        } else {
+            unavailableTimesInfo.style.display = 'none';
+        }
         
-        conflictingEvents.forEach(e => {
-            const eStart = e.startTime;
-            const eEnd = e.endTime;
-            
-            Array.from(startTimeSelect.options).forEach(opt => {
-                if (!opt.value) return;
-                if (opt.value >= eStart && opt.value < eEnd) {
-                    opt.disabled = true;
-                    opt.textContent = `${opt.value} (예약불가)`;
-                }
-            });
-            
-            Array.from(endTimeSelect.options).forEach(opt => {
-                if (!opt.value) return;
-                if (opt.value > eStart && opt.value <= eEnd) {
-                    opt.disabled = true;
-                    opt.textContent = `${opt.value} (예약불가)`;
-                }
-            });
-        });
+        // Validation on current input values
+        const start = startTimeInput.value;
+        const end = endTimeInput.value;
         
-        const selectedStart = startTimeSelect.value;
-        if (selectedStart) {
-            let firstBookedAfterStart = "24:00";
-            conflictingEvents.forEach(e => {
-                if (e.startTime >= selectedStart && e.startTime < firstBookedAfterStart) {
-                    firstBookedAfterStart = e.startTime;
-                }
+        if (start && end) {
+            const hasOverlap = conflictingEvents.some(e => {
+                return (start < e.endTime && end > e.startTime);
             });
-            
-            Array.from(endTimeSelect.options).forEach(opt => {
-                if (!opt.value) return;
-                if (opt.value <= selectedStart) {
-                    opt.disabled = true;
-                }
-                if (opt.value > firstBookedAfterStart) {
-                    opt.disabled = true;
-                }
-            });
+            if (hasOverlap) {
+                alert("선택하신 시간은 이미 예약되어 있습니다.\n아래 [예약 불가 시간]을 피해 다시 설정해 주세요.");
+                startTimeInput.value = '';
+                endTimeInput.value = '';
+            }
         }
     }
 
@@ -1809,6 +1767,5 @@ const defaultOrganization = [
     locationSelect.addEventListener('change', updateTimeAvailability);
     locationInput.addEventListener('input', updateTimeAvailability);
     vehicleSelect.addEventListener('change', updateTimeAvailability);
-    startTimeSelect.addEventListener('change', updateTimeAvailability);
-
-    populateTimeOptions();
+    startTimeInput.addEventListener('change', updateTimeAvailability);
+    endTimeInput.addEventListener('change', updateTimeAvailability);
