@@ -331,12 +331,22 @@
                         </div>
                         <div class="form-row" id="time-container" style="order: 4;">
                             <div class="form-group">
-                                <label for="start-time">시작 시간 <span class="required" style="color: var(--danger);">*</span></label>
-                                <input type="time" id="start-time" step="600" required>
+                                <label>시작 시간 <span class="required" style="color: var(--danger);">*</span></label>
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <select id="start-hour" required style="flex: 1;"></select>
+                                    <span>:</span>
+                                    <select id="start-minute" required style="flex: 1;"></select>
+                                    <input type="hidden" id="start-time">
+                                </div>
                             </div>
                             <div class="form-group">
-                                <label for="end-time">종료 시간 <span class="required" style="color: var(--danger);">*</span></label>
-                                <input type="time" id="end-time" step="600" required>
+                                <label>종료 시간 <span class="required" style="color: var(--danger);">*</span></label>
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <select id="end-hour" required style="flex: 1;"></select>
+                                    <span>:</span>
+                                    <select id="end-minute" required style="flex: 1;"></select>
+                                    <input type="hidden" id="end-time">
+                                </div>
                             </div>
                         </div>
                         <div id="unavailable-times-info" style="display: none; order: 4; margin-top: -0.5rem; color: var(--danger); font-size: 0.85rem; padding: 0.5rem; background-color: rgba(239, 68, 68, 0.1); border-radius: 4px;">
@@ -438,6 +448,21 @@
         </div>
     </div>
 
+    <!-- Reservation Type Selection Modal -->
+    <div id="reservation-type-modal" class="modal-overlay" style="display: none; z-index: 1600;">
+        <div class="modal-content" style="max-width: 400px; padding: 1.5rem;">
+            <div class="modal-header">
+                <h3>예약 메뉴 선택</h3>
+                <button class="close-modal" id="close-reservation-type-btn"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
+                <button type="button" class="btn" id="btn-type-committee" style="background-color: var(--primary); color: white; padding: 1rem; font-size: 1.1rem; border-radius: var(--radius-md); border: none; cursor: pointer;"><i class="ph ph-users-three"></i> <span class="lbl-menu-committee">위원회/부서 일정</span></button>
+                <button type="button" class="btn" id="btn-type-cell" style="background-color: #10b981; color: white; padding: 1rem; font-size: 1.1rem; border-radius: var(--radius-md); border: none; cursor: pointer;"><i class="ph ph-users"></i> <span class="lbl-menu-cell">셀/모임 장소예약</span></button>
+                <button type="button" class="btn" id="btn-type-vehicle" style="background-color: #f59e0b; color: white; padding: 1rem; font-size: 1.1rem; border-radius: var(--radius-md); border: none; cursor: pointer;"><i class="ph ph-car"></i> <span class="lbl-menu-vehicle">차량 운영예약</span></button>
+            </div>
+        </div>
+    </div>
+
     <!-- Day Events Modal (Mobile) -->
     <div id="day-events-modal" class="modal-overlay" style="display: none; z-index: 1500;">
         <div class="modal-content" style="max-width: 400px; margin: 1rem;">
@@ -446,8 +471,9 @@
                 <button class="close-modal" id="close-day-events-btn"><i class="ph ph-x"></i></button>
             </div>
             <div class="modal-body">
-                <div id="day-events-list" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 60vh; overflow-y: auto;">
+                <div id="day-events-list" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 60vh; overflow-y: auto; margin-bottom: 1rem;">
                 </div>
+                <button type="button" id="btn-add-event-from-modal" class="btn btn-primary btn-block"><i class="ph ph-plus"></i> 이 날짜에 예약하기</button>
             </div>
         </div>
     </div>
